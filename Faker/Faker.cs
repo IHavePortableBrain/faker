@@ -1,9 +1,11 @@
-﻿using Faker.Generators;
+﻿using Faker.Generators.System;
+using Faker.Generators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Faker
 {
@@ -32,17 +34,20 @@ namespace Faker
             return created;
         }
 
-        protected void Test()
-        {
-            Console.WriteLine("hoho");
-        }
-
         public Faker()
         {
             GeneratorByType = new Dictionary<Type, IGenerator>();
 
-            IGenerator generator = new IntGenerator();
-            GeneratorByType.Add(generator.TypeOfGenerated, generator);
+            Assembly generatorsAssembly = Assembly.GetAssembly(typeof(IGenerator));
+            foreach(Type type in generatorsAssembly.DefinedTypes)
+            {
+                if (typeof(IGenerator).IsAssignableFrom(type) && type.IsClass)
+                {
+                    ConstructorInfo[] constructorsInfo = type.GetConstructors();
+                    IGenerator generator = (IGenerator)constructorsInfo[0].Invoke(new object[0]); // relying on fact that there is only one ctor in each generator.system class with no parametrs
+                    GeneratorByType.Add(generator.TypeOfGenerated, generator);
+                }
+            }
         }
     }
 }

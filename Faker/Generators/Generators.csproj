@@ -41,8 +41,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="System\StringGenerator.cs" />
+    <Compile Include="System\BoolGenerator.cs" />
+    <Compile Include="System\UIntGenerator.cs" />
+    <Compile Include="System\ULongGenerator.cs" />
+    <Compile Include="System\UShortGenerator.cs" />
+    <Compile Include="System\ShortGenerator.cs" />
+    <Compile Include="System\SByteGenerator.cs" />
+    <Compile Include="System\DecimalGenerator.cs" />
+    <Compile Include="System\DoubleGenerator.cs" />
     <Compile Include="IGenerator.cs" />
-    <Compile Include="IntGenerator.cs" />
+    <Compile Include="System\ByteGenerator.cs" />
+    <Compile Include="System\DateTimeGenerator.cs" />
+    <Compile Include="System\IntGenerator.cs" />
+    <Compile Include="System\FloatGenerator.cs" />
+    <Compile Include="System\LongGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

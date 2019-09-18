@@ -7,7 +7,7 @@ using Faker;
 
 namespace Faker.UseExample
 {
-    class Program
+    class UseExample
     {
         static void Main(string[] args)
         {
@@ -16,6 +16,8 @@ namespace Faker.UseExample
             CheckT<string>();
             Faker _faker = new Faker();
             int i = _faker.Create<int>();
+            sbyte s = _faker.Create<sbyte>();
+            string str = _faker.Create<string>();
             Console.ReadKey();
         }
 

@@ -4,16 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Faker.Generators
+namespace Faker.Generators.System
 {
     public class IntGenerator : IGenerator
     {
-        Type IGenerator.TypeOfGenerated => typeof(int);
-        private Random _random = new Random();
+        public Type TypeOfGenerated => typeof(int);
+        protected Random Random = new Random();
 
         public object Generate()
         {
-            return _random.Next();
+            return Random.Next();
         }
     }
 }
