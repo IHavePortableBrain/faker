@@ -4,9 +4,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Faker.Test
 {
     [TestClass]
-    public class Faker
+    public class FakerTester
     {
-        [TestMethod]
         public void TestMethod1()
         {
         }
