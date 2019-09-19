@@ -12,6 +12,7 @@ namespace Faker
     public class Faker : IFaker
     {
         protected Dictionary<Type, IGenerator> GeneratorByType;
+        protected readonly Random Random = new Random();
 
         public T Create<T>()
         {
@@ -23,13 +24,69 @@ namespace Faker
             object created = null;
 
             if (GeneratorByType.TryGetValue(type, out IGenerator generator)){
-                created = generator.Generate();
+                created = generator.Generate(Random);
             }
-            else
+            else if (type.IsClass)
             {
-                throw new KeyNotFoundException();
+                int longestConstructorParamListLength = 0;
+                ConstructorInfo constructorToUseInfo = null;
+
+                foreach (ConstructorInfo constructor in type.GetConstructors())
+                {
+                    if (constructor.GetParameters().Length > longestConstructorParamListLength)
+                    {
+                        longestConstructorParamListLength = constructor.GetParameters().Length;
+                        constructorToUseInfo = constructor;
+                    }
+                }
+
+                created = constructorToUseInfo == null ? CreateByProperties(type) : CreateByConstructor(type, constructorToUseInfo);
+
             }
 
+            return created;
+        }
+
+        private object CreateByConstructor(Type type, ConstructorInfo constructorInfo)
+        {
+            var parametersValues = new List<object>();
+            object created;
+
+            foreach (ParameterInfo parameterInfo in constructorInfo.GetParameters())
+            {
+                object value = Create(parameterInfo.ParameterType);
+                parametersValues.Add(value);
+            }
+            try
+            {
+                created = constructorInfo.Invoke(parametersValues.ToArray());
+                return created;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private object CreateByProperties(Type type)
+        {
+            object created = Activator.CreateInstance(type);
+            object value;
+
+            foreach (FieldInfo fieldInfo in type.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance))
+            {
+                value = Create(fieldInfo.FieldType);
+                fieldInfo.SetValue(created, value);
+            }
+
+            foreach (PropertyInfo propertyInfo in type.GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance))
+            {
+                if (propertyInfo.CanWrite)
+                {
+                    value = Create(propertyInfo.PropertyType);
+                    propertyInfo.SetValue(created, value);
+                }
+            }
 
             return created;
         }
@@ -49,5 +106,6 @@ namespace Faker
                 }
             }
         }
+
     }
 }

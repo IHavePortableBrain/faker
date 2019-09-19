@@ -9,11 +9,11 @@ namespace Faker.Generators.System
     public class ByteGenerator : IGenerator
     {
         public Type TypeOfGenerated => typeof(byte);
-        protected Random Random = new Random();
+        
 
-        public object Generate()
+        public object Generate(Random random)
         {
-            return (byte)Random.Next();
+            return (byte)random.Next();
         }
     }
 }

@@ -9,11 +9,13 @@ namespace Faker.Generators.System
     public class LongGenerator : IGenerator
     {
         public Type TypeOfGenerated => typeof(long);
-        protected Random Random = new Random();
+        
 
-        public object Generate()
+        public object Generate(Random random)
         {
-            return (long)Random.NextDouble();
+            byte[] buf = new byte[8];
+            random.NextBytes(buf);
+            return BitConverter.ToInt64(buf, 0);
         }
     }
 }

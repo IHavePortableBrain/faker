@@ -9,11 +9,13 @@ namespace Faker.Generators.System
     public class DateTimeGenerator : IGenerator
     {
         public Type TypeOfGenerated => typeof(DateTime);
-        protected Random Random = new Random();
 
-        public object Generate()
+        public object Generate(Random random)
         {
-            return new DateTime((long)Random.NextDouble());
+            byte[] buf = new byte[8];
+            random.NextBytes(buf);
+            long ticks = BitConverter.ToInt64(buf, 0);
+            return new DateTime(Math.Abs(ticks % (DateTime.MaxValue.Ticks - DateTime.MinValue.Ticks)) + DateTime.MinValue.Ticks);
         }
     }
 }

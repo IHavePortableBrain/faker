@@ -10,7 +10,7 @@ namespace Faker.Generators.System
     {
         public Type TypeOfGenerated => typeof(bool);
 
-        public object Generate()
+        public object Generate(Random random)
         {
             return (bool)true;
         }

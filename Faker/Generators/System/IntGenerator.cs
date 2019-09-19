@@ -9,11 +9,11 @@ namespace Faker.Generators.System
     public class IntGenerator : IGenerator
     {
         public Type TypeOfGenerated => typeof(int);
-        protected Random Random = new Random();
+        
 
-        public object Generate()
+        public object Generate(Random random)
         {
-            return Random.Next();
+            return random.Next();
         }
     }
 }
