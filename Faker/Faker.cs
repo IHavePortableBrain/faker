@@ -1,5 +1,6 @@
 ﻿using Faker.Generators.System;
 using Faker.Generators;
+using Faker.Generators.Generic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,11 +8,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 
+
 namespace Faker
 {
+    //Todo: rewrite to have unsetted by ctor properties setted. RewritePropertiesAndFieldsWithDefaultValues
     public class Faker : IFaker
     {
         protected Dictionary<Type, IGenerator> GeneratorByType;
+        protected Dictionary<Type, IGenericGenerator> GenericGeneratorByType;
         protected readonly Random Random = new Random();
 
         public T Create<T>()
@@ -22,6 +26,7 @@ namespace Faker
         protected object Create(Type type)
         {
             object created = null;
+            var interfaces = type.GetInterfaces();
 
             if (GeneratorByType.TryGetValue(type, out IGenerator generator)){
                 created = generator.Generate(Random);
@@ -30,6 +35,17 @@ namespace Faker
             {
                 var enumValues = type.GetEnumValues();
                 created = enumValues.GetValue(Random.Next() % enumValues.Length);
+            }
+            else if (interfaces.Length > 0)//must be after is Enum to avoid enumerable interface creation attempt
+            {
+                foreach (Type currInterface in interfaces)
+                {
+                    if (GenericGeneratorByType.TryGetValue(currInterface.GetGenericTypeDefinition(), out IGenericGenerator genericGenerator))
+                    {
+                        created = genericGenerator.Generate(Random, type, Create);
+                        break;
+                    }
+                }
             }
             else if (type.IsClass && !type.IsAbstract)
             {
@@ -48,7 +64,7 @@ namespace Faker
                 {
                     created = constructorToUseInfo == null ? CreateByProperties(type) : CreateByConstructor(type, constructorToUseInfo);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     created = null;
                 }
@@ -61,7 +77,7 @@ namespace Faker
             {
                 created = Activator.CreateInstance(type);
             }
-
+            
             return created;
         }
 
@@ -112,8 +128,9 @@ namespace Faker
         public Faker()
         {
             GeneratorByType = new Dictionary<Type, IGenerator>();
+            GenericGeneratorByType = new Dictionary<Type, IGenericGenerator>();
 
-            Assembly generatorsAssembly = Assembly.GetAssembly(typeof(IGenerator));
+            Assembly generatorsAssembly = Assembly.GetAssembly(typeof(IGenerator));//IGenericGenerator
             foreach(Type type in generatorsAssembly.DefinedTypes)
             {
                 if (typeof(IGenerator).IsAssignableFrom(type) && type.IsClass)
@@ -122,8 +139,13 @@ namespace Faker
                     IGenerator generator = (IGenerator)constructorsInfo[0].Invoke(new object[0]); // relying on fact that there is only one ctor in each generator.system class with no parametrs
                     GeneratorByType.Add(generator.TypeOfGenerated, generator);
                 }
+                else if(typeof(IGenericGenerator).IsAssignableFrom(type) && type.IsClass)
+                {
+                    ConstructorInfo[] constructorsInfo = type.GetConstructors();
+                    IGenericGenerator genericGenerator = (IGenericGenerator)constructorsInfo[0].Invoke(new object[0]); // relying on fact that there is only one ctor in each generator.system class with no parametrs
+                    GenericGeneratorByType.Add(genericGenerator.TypeOfGenerated, genericGenerator);
+                }
             }
         }
-
     }
 }

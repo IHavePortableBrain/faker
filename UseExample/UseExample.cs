@@ -25,7 +25,7 @@ namespace Faker.UseExample
         private long l;
         sbyte sb;
         private string str;
-        
+
 
         public Foo(int i, string str)
         {
@@ -38,9 +38,10 @@ namespace Faker.UseExample
     {
         public long l;
         public DateTime DateTime;
-        public Foo foo;
+        public List<Foo> foos;
         public System.Xml.Serialization.CodeExporter CodeExporter;
         public System.Xml.Serialization.XmlSerializer XmlSerializer;
+
     }
 
     class UseExample
@@ -61,6 +62,7 @@ namespace Faker.UseExample
             Faker _faker = new Faker();
             Bar bar = _faker.Create<Bar>();
             System.Xml.Serialization.XmlSerializer xmlSerializer = _faker.Create<System.Xml.Serialization.XmlSerializer>();
+
             Console.ReadKey();
         }
 

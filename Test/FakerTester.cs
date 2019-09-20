@@ -61,5 +61,16 @@ namespace Faker.Test
             Assert.AreEqual(xmlSerializer, null);
         }
 
+        [TestMethod]
+        public void ListCreationTest()
+        {
+            FoosList foosList = _faker.Create<FoosList>();
+            Assert.IsNotNull(foosList.Foos[0]);
+            Assert.AreNotEqual(default(DateTime), foosList.DateTime);
+            Assert.IsNull(foosList.XmlSerializer);
+            Assert.AreNotEqual(default(int), foosList.Foos[0].myStruct.a);
+            Assert.AreNotEqual(default(string), foosList.Foos[0].str);
+        }
+
     }
 }
