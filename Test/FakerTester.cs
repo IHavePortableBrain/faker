@@ -54,5 +54,12 @@ namespace Faker.Test
             Assert.AreEqual(dto.str, default(string));
         }
 
+        [TestMethod]
+        public void ComplexCtorClassCreationTest()
+        {
+            System.Xml.Serialization.XmlSerializer xmlSerializer = _faker.Create<System.Xml.Serialization.XmlSerializer>();
+            Assert.AreEqual(xmlSerializer, null);
+        }
+
     }
 }

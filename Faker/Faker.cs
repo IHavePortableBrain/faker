@@ -28,8 +28,10 @@ namespace Faker
             }
             else if (type.IsEnum)
             {
+                var enumValues = type.GetEnumValues();
+                created = enumValues.GetValue(Random.Next() % enumValues.Length);
             }
-            else if (type.IsClass)
+            else if (type.IsClass && !type.IsAbstract)
             {
                 int longestConstructorParamListLength = 0;
                 ConstructorInfo constructorToUseInfo = null;
@@ -42,9 +44,18 @@ namespace Faker
                         constructorToUseInfo = constructor;
                     }
                 }
-
-                created = constructorToUseInfo == null ? CreateByProperties(type) : CreateByConstructor(type, constructorToUseInfo);
-
+                try
+                {
+                    created = constructorToUseInfo == null ? CreateByProperties(type) : CreateByConstructor(type, constructorToUseInfo);
+                }
+                catch (Exception)
+                {
+                    created = null;
+                }
+            }
+            else if (type.IsValueType && type.IsSealed && !type.IsPrimitive && !type.IsContextful)//struct 
+            {
+                created = CreateByProperties(type);
             }
             else if (type.IsValueType)
             {
