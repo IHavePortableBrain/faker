@@ -49,11 +49,21 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTClassNoParameterizedCtor.cs" />
+    <Compile Include="DTClassParameterizedCtor.cs" />
+    <Compile Include="DTClassWithInnerDTClasses.cs" />
+    <Compile Include="DTClassWithNoInnerDTClasses.cs" />
     <Compile Include="FakerTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Faker\Faker.csproj">
+      <Project>{3e0f2664-b27b-4059-b3ce-aff59c871005}</Project>
+      <Name>Faker</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

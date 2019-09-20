@@ -7,8 +7,20 @@ using Faker;
 
 namespace Faker.UseExample
 {
+    public struct MyStruct
+    {
+        public int a;
+        public decimal b;
+    }
+
+    public enum MyEnum
+    {
+        e0, e1
+    }
+
     public class Foo
     {
+
         private long l;
         sbyte sb;
         private string str;
@@ -33,7 +45,8 @@ namespace Faker.UseExample
         public ulong ulongg;
         public ushort ushortt;
         public uint uyntt;
-
+        public Foo foo;
+        public MyStruct myStruct;
     }
 
     class UseExample
@@ -43,8 +56,14 @@ namespace Faker.UseExample
             //CheckT<DateTime>();
             //CheckT<int>();
             //CheckT<string>();
+            Type t1 = typeof(MyEnum);
+            Type t2 = typeof(MyStruct);
+            Console.WriteLine(t1.ToString() );
+            Console.WriteLine(t2.ToString());
+
+            Console.WriteLine(t1.GetEnumValues());
+
             Faker _faker = new Faker();
-            Foo foo = _faker.Create<Foo>();
             Bar bar = _faker.Create<Bar>();
             Console.ReadKey();
         }

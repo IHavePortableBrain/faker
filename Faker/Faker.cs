@@ -26,6 +26,9 @@ namespace Faker
             if (GeneratorByType.TryGetValue(type, out IGenerator generator)){
                 created = generator.Generate(Random);
             }
+            else if (type.IsEnum)
+            {
+            }
             else if (type.IsClass)
             {
                 int longestConstructorParamListLength = 0;
@@ -42,6 +45,10 @@ namespace Faker
 
                 created = constructorToUseInfo == null ? CreateByProperties(type) : CreateByConstructor(type, constructorToUseInfo);
 
+            }
+            else if (type.IsValueType)
+            {
+                created = Activator.CreateInstance(type);
             }
 
             return created;
