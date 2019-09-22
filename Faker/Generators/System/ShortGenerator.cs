@@ -9,11 +9,16 @@ namespace Faker.Generators.System
     public class ShortGenerator : IGenerator
     {
         public Type TypeOfGenerated => typeof(short);
-        
+        public Random Random { get; private set; }
 
-        public object Generate(Random random)
+        public ShortGenerator(Random random)
         {
-            return (short)random.Next();
+            Random = random;
+        }
+
+        public object Generate(Type t)
+        {
+            return (short)Random.Next();
         }
     }
 }

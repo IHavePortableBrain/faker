@@ -53,22 +53,11 @@ namespace Faker.UseExample
 
         static void Main(string[] args)
         {
-            //CheckT<DateTime>();
-            //CheckT<int>();
-            //CheckT<string>();
-            Type t1 = typeof(MyEnum);
-            Type t2 = typeof(MyStruct);
-            Type t3 = typeof(MyStruct1);
             Faker _faker = new Faker();
             Bar bar = _faker.Create<Bar>();
-            System.Xml.Serialization.XmlSerializer xmlSerializer = _faker.Create<System.Xml.Serialization.XmlSerializer>();
-
+            FooArray fooArray = _faker.Create<FooArray>();
+            int[] intArr = _faker.Create<int[]> ();
             Console.ReadKey();
-        }
-
-        private static void CheckT<T>()
-        {
-            Console.WriteLine(typeof(T));
         }
     }
 }

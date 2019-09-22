@@ -9,11 +9,16 @@ namespace Faker.Generators.System
     public class DecimalGenerator : IGenerator
     {
         public Type TypeOfGenerated => typeof(decimal);
-        
+        public Random Random { get; private set; }
 
-        public object Generate(Random random)
+        public DecimalGenerator(Random random)
         {
-            return NextDecimal(random);
+            Random = random;
+        }
+
+        public object Generate(Type t)
+        {
+            return NextDecimal(Random);
         }
 
         private int NextInt32(Random rng)

@@ -9,11 +9,16 @@ namespace Faker.Generators.System
     public class IntGenerator : IGenerator
     {
         public Type TypeOfGenerated => typeof(int);
-        
+        public Random Random { get; private set; }
 
-        public object Generate(Random random)
+        public IntGenerator(Random random)
         {
-            return random.Next();
+            Random = random;
+        }
+
+        public object Generate(Type t)
+        {
+            return Random.Next();
         }
     }
 }

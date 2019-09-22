@@ -41,7 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Generic\ListInterfaceGenerator.cs" />
+    <Compile Include="Generic\IArrayGenerator.cs" />
+    <Compile Include="Generic\ArrayGenerator.cs" />
+    <Compile Include="Generic\SingleTypeListInterfaceGenerator.cs" />
     <Compile Include="Generic\IGenericGenerator.cs" />
     <Compile Include="System\StringGenerator.cs" />
     <Compile Include="System\BoolGenerator.cs" />

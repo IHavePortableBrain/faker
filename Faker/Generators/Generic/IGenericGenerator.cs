@@ -8,9 +8,8 @@ namespace Faker.Generators.Generic
 {
     public delegate object GenerateAnyTypeDelegate(Type type);
 
-    public interface IGenericGenerator
+    public interface IGenericGenerator:IGenerator
     {
-        object Generate(Random random, Type type, GenerateAnyTypeDelegate generateAnyTypeDelegate);
-        Type TypeOfGenerated { get; }
+        GenerateAnyTypeDelegate GenerateAnyTypeDelegate { get; }
     }
 }

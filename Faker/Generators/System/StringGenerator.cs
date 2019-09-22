@@ -11,15 +11,19 @@ namespace Faker.Generators.System
         const int MinLength = 3;
         const int MaxLength = 20;
         public Type TypeOfGenerated => typeof(string);
-        
+        public Random Random { get; private set; }
 
-
-        public object Generate(Random random)
+        public StringGenerator(Random random)
         {
-            int length = random.Next(MinLength, MaxLength);
+            Random = random;
+        }
+
+        public object Generate(Type t)
+        {
+            int length = Random.Next(MinLength, MaxLength);
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
-              .Select(s => s[random.Next(s.Length)]).ToArray());
+              .Select(s => s[Random.Next(s.Length)]).ToArray());
         }
     }
 }

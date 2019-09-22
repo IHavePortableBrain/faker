@@ -9,8 +9,14 @@ namespace Faker.Generators.System
     public class BoolGenerator : IGenerator
     {
         public Type TypeOfGenerated => typeof(bool);
+        public Random Random { get; private set; }
 
-        public object Generate(Random random)
+        public BoolGenerator(Random random)
+        {
+            Random = random;
+        }
+
+        public object Generate(Type t)
         {
             return (bool)true;
         }

@@ -9,11 +9,16 @@ namespace Faker.Generators.System
     public class FloatGenerator : IGenerator
     {
         public Type TypeOfGenerated => typeof(float);
-        
+        public Random Random { get; private set; }
 
-        public object Generate(Random random)
+        public FloatGenerator(Random random)
         {
-            var generated = (float)random.NextDouble();
+            Random = random;
+        }
+
+        public object Generate(Type t)
+        {
+            var generated = (float)Random.NextDouble();
             return generated;
         }
     }

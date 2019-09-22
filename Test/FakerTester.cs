@@ -72,5 +72,17 @@ namespace Faker.Test
             Assert.AreNotEqual(default(string), foosList.Foos[0].str);
         }
 
+        [TestMethod]
+        public void ArrayCreationTest()
+        {
+            FooArray fooArray = _faker.Create<FooArray>();
+            Assert.IsNotNull(fooArray);
+            Assert.IsNotNull(fooArray.Foos);
+            Assert.IsNotNull(fooArray.Foos[0]);
+            Assert.AreNotEqual(default(DateTime), fooArray.DateTime);
+            Assert.AreNotEqual(default(int), fooArray.Foos[0].myStruct.a);
+            Assert.AreNotEqual(default(string), fooArray.Foos[0].str);
+        }
+
     }
 }

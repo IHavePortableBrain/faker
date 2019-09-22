@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Foo.cs" />
+    <Compile Include="FooArray.cs" />
     <Compile Include="UseExample.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

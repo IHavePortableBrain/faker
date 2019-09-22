@@ -9,11 +9,16 @@ namespace Faker.Generators.System
     public class UshortGenerator : IGenerator
     {
         public Type TypeOfGenerated => typeof(ushort);
-        
+        public Random Random { get; private set; }
 
-        public object Generate(Random random)
+        public UshortGenerator(Random random)
         {
-            return (ushort)random.Next();
+            Random = random;       
+        } 
+
+        public object Generate(Type t)
+        {
+            return (ushort)Random.Next();
         }
     }
 }

@@ -50,13 +50,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Foo.cs" />
-    <Compile Include="DTClassNoParameterizedCtor.cs" />
-    <Compile Include="DTClassParameterizedCtor.cs" />
-    <Compile Include="DTClassWithInnerDTClasses.cs" />
-    <Compile Include="DTClassWithNoInnerDTClasses.cs" />
+    <Compile Include="Classes\Foo.cs" />
+    <Compile Include="Classes\DTClassNoParameterizedCtor.cs" />
+    <Compile Include="Classes\DTClassParameterizedCtor.cs" />
+    <Compile Include="Classes\DTClassWithInnerDTClasses.cs" />
+    <Compile Include="Classes\DTClassWithNoInnerDTClasses.cs" />
     <Compile Include="FakerTester.cs" />
-    <Compile Include="FoosList.cs" />
+    <Compile Include="Classes\FooArray.cs" />
+    <Compile Include="Classes\FoosList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

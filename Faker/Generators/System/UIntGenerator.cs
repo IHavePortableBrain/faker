@@ -9,12 +9,17 @@ namespace Faker.Generators.System
     public class UIntGenerator : IGenerator
     {
         public Type TypeOfGenerated => typeof(uint);
-        
+        public Random Random { get; private set; }
 
-        public object Generate(Random random)
+        public UIntGenerator(Random random)
+        {
+            Random = random;
+        }
+
+        public object Generate(Type t)
         {
             byte[] buf = new byte[8];
-            random.NextBytes(buf);
+            Random.NextBytes(buf);
             return BitConverter.ToUInt32(buf, 0);
         }
     }
