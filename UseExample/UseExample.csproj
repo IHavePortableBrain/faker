@@ -8,10 +8,11 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>UseExample</RootNamespace>
     <AssemblyName>UseExample</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -45,6 +46,8 @@
   <ItemGroup>
     <Compile Include="Foo.cs" />
     <Compile Include="FooArray.cs" />
+    <Compile Include="RecurrentDependent.cs" />
+    <Compile Include="RecurrentDependent2.cs" />
     <Compile Include="UseExample.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -84,5 +84,28 @@ namespace Faker.Test
             Assert.AreNotEqual(default(string), fooArray.Foos[0].str);
         }
 
+        [TestMethod]
+        public void NotImplementedBaseTypeGenerationTest()
+        {
+            NotImplementedTypeGeneratorFieldAndPropClass notImplemented = _faker.Create<NotImplementedTypeGeneratorFieldAndPropClass>();
+            Assert.AreEqual(default(char), notImplemented.Charr);
+            Assert.AreEqual(default(char), notImplemented.CharProp);
+        }
+
+        [TestMethod]
+        public void RecurrentDependenceTest()
+        {
+            RecurrentDependent recc = _faker.Create<RecurrentDependent>();
+            Type recType = typeof(RecurrentDependent);
+            Type recType2 = typeof(RecurrentDependent2);
+            Assert.IsNull(recc.RecurrentProperty);
+            Assert.AreNotEqual(default(int), recc.Intt);
+            Assert.IsNotNull(recc.Recurrent2);
+            Assert.IsNull(recc.Recurrent2.Recurrent);
+            Assert.IsNull(recc.Recurrent2.Recurrent2);
+            Assert.IsNull(recc.Recurrent2.RecurrentProperty);
+            Assert.AreNotEqual(default(int), recc.Recurrent2.Intt);
+        }
+
     }
 }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Faker.Generators.Generic
 {
+    //TODO: rewrite to icollection ad its the most general Generic interface
     public class SingleTypeListInterfaceGenerator : IGenericGenerator
     {
         protected readonly int MaxGenericLength = 5;

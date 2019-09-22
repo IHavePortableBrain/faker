@@ -20,6 +20,7 @@ namespace Faker
         protected Dictionary<Type, IGenerator> GeneratorByType;
         protected Dictionary<Type, IGenericGenerator> GenericGeneratorByType;
         protected readonly Random Random = new Random();
+        protected Stack<Type> TypesNotCreatedYet = new Stack<Type>();
 
         public T Create<T>()
         {
@@ -92,8 +93,14 @@ namespace Faker
 
         private object CreateByConstructor(Type type, ConstructorInfo constructorInfo)
         {
-            var parametersValues = new List<object>();
+            if (TypesNotCreatedYet.Contains(type))
+                return null;
+            else
+                TypesNotCreatedYet.Push(type);
+
             object created;
+            var parametersValues = new List<object>();
+            
 
             foreach (ParameterInfo parameterInfo in constructorInfo.GetParameters())
             {
@@ -109,28 +116,42 @@ namespace Faker
             {
                 return null;
             }
+            finally
+            {
+                TypesNotCreatedYet.Pop();
+            }
         }
 
         private object CreateByProperties(Type type)
         {
+            if (TypesNotCreatedYet.Contains(type))
+                return null;
+            else
+                TypesNotCreatedYet.Push(type);
+
             object created = Activator.CreateInstance(type);
             object value;
-
-            foreach (FieldInfo fieldInfo in type.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance))
+            try
             {
-                value = Create(fieldInfo.FieldType);
-                fieldInfo.SetValue(created, value);
-            }
-
-            foreach (PropertyInfo propertyInfo in type.GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance))
-            {
-                if (propertyInfo.CanWrite)
+                foreach (FieldInfo fieldInfo in type.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance))
                 {
-                    value = Create(propertyInfo.PropertyType);
-                    propertyInfo.SetValue(created, value);
+                    value = Create(fieldInfo.FieldType);
+                    fieldInfo.SetValue(created, value);
+                }
+
+                foreach (PropertyInfo propertyInfo in type.GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance))
+                {
+                    if (propertyInfo.CanWrite)
+                    {
+                        value = Create(propertyInfo.PropertyType);
+                        propertyInfo.SetValue(created, value);
+                    }
                 }
             }
-
+            finally
+            {
+                TypesNotCreatedYet.Pop();
+            }
             return created;
         }
 

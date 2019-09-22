@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Generators</RootNamespace>
     <AssemblyName>Generators</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -52,8 +53,6 @@
     <Compile Include="System\UShortGenerator.cs" />
     <Compile Include="System\ShortGenerator.cs" />
     <Compile Include="System\SByteGenerator.cs" />
-    <Compile Include="System\DecimalGenerator.cs" />
-    <Compile Include="System\DoubleGenerator.cs" />
     <Compile Include="IGenerator.cs" />
     <Compile Include="System\ByteGenerator.cs" />
     <Compile Include="System\DateTimeGenerator.cs" />

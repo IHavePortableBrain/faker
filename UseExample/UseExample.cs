@@ -54,9 +54,10 @@ namespace Faker.UseExample
         static void Main(string[] args)
         {
             Faker _faker = new Faker();
-            Bar bar = _faker.Create<Bar>();
-            FooArray fooArray = _faker.Create<FooArray>();
-            int[] intArr = _faker.Create<int[]> ();
+            //Bar bar = _faker.Create<Bar>();
+            //FooArray fooArray = _faker.Create<FooArray>();
+            //int[] intArr = _faker.Create<int[]> ();
+            RecurrentDependent intArr = _faker.Create<RecurrentDependent>();
             Console.ReadKey();
         }
     }
