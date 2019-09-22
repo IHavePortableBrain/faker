@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
-
+using System.IO;
 
 namespace Faker
 {
@@ -21,6 +21,8 @@ namespace Faker
         protected Dictionary<Type, IGenericGenerator> GenericGeneratorByType;
         protected readonly Random Random = new Random();
         protected Stack<Type> TypesNotCreatedYet = new Stack<Type>();
+        private readonly string _pluginsPath = "Plugin\\netstandard2.0";
+
 
         public T Create<T>()
         {
@@ -155,27 +157,61 @@ namespace Faker
             return created;
         }
 
+        private void AddGenerators(Assembly generatorsAssembly)
+        {
+            foreach (Type type in generatorsAssembly.DefinedTypes)
+            {
+                if (typeof(IGenericGenerator).IsAssignableFrom(type) && type.IsClass) // first check classes wich inherit IGenerator
+                {
+                    
+                    ConstructorInfo[] constructorsInfo = type.GetConstructors();
+                    GenerateAnyTypeDelegate generateAnyTypeDelegate = Create;
+                    IGenericGenerator genericGenerator = (IGenericGenerator)constructorsInfo[0].Invoke(new object[] { Random, generateAnyTypeDelegate });
+                    if (GenericGeneratorByType.Keys.Contains(genericGenerator.TypeOfGenerated))
+                        continue;
+                    else
+                        GenericGeneratorByType.Add(genericGenerator.TypeOfGenerated, genericGenerator);
+                }
+                else if (typeof(IGenerator).IsAssignableFrom(type) && type.IsClass)
+                {
+                    ConstructorInfo[] constructorsInfo = type.GetConstructors();
+                    IGenerator generator = (IGenerator)constructorsInfo[0].Invoke(new object[] { Random });
+                    if (GeneratorByType.Keys.Contains(generator.TypeOfGenerated))
+                        continue;
+                    else
+                        GeneratorByType.Add(generator.TypeOfGenerated, generator);
+                }
+            }
+        }
+
         public Faker()
         {
             GeneratorByType = new Dictionary<Type, IGenerator>();
             GenericGeneratorByType = new Dictionary<Type, IGenericGenerator>();
 
             Assembly generatorsAssembly = Assembly.GetAssembly(typeof(IGenerator));//and IGenericGenerator
-            foreach(Type type in generatorsAssembly.DefinedTypes)
+            AddGenerators(generatorsAssembly);
+
+            List<Assembly> assemblies = new List<Assembly>();
+            try
             {
-                if (typeof(IGenericGenerator).IsAssignableFrom(type) && type.IsClass) // first check classes wich inherit IGenerator
+                foreach (string file in Directory.GetFiles(_pluginsPath, "*.dll"))
                 {
-                    ConstructorInfo[] constructorsInfo = type.GetConstructors();
-                    GenerateAnyTypeDelegate generateAnyTypeDelegate = Create;
-                    IGenericGenerator genericGenerator = (IGenericGenerator)constructorsInfo[0].Invoke(new object[] { Random, generateAnyTypeDelegate }); 
-                    GenericGeneratorByType.Add(genericGenerator.TypeOfGenerated, genericGenerator);
+                    try
+                    {
+                        Assembly pluginAssembly = Assembly.LoadFile(new FileInfo(file).FullName);
+                        assemblies.Add(pluginAssembly);
+                        AddGenerators(pluginAssembly);
+                    }
+                    catch (BadImageFormatException e )
+                    {
+                        throw e;
+                    }
                 }
-                else if(typeof(IGenerator).IsAssignableFrom(type) && type.IsClass)
-                {
-                    ConstructorInfo[] constructorsInfo = type.GetConstructors();
-                    IGenerator generator = (IGenerator)constructorsInfo[0].Invoke(new object[] { Random });
-                    GeneratorByType.Add(generator.TypeOfGenerated, generator);
-                }
+            }
+            catch (DirectoryNotFoundException e)
+            {
+                throw e;
             }
         }
     }
