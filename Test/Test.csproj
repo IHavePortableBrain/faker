@@ -51,6 +51,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Generator42 - Копировать.cs" />
+    <Compile Include="Classes\QuestionWithNoCtor.cs" />
+    <Compile Include="Classes\QuestionWithCtor.cs" />
+    <Compile Include="Classes\Generator42.cs" />
     <Compile Include="Classes\NotImplementedTypeGeneratorFieldAndPropClass.cs" />
     <Compile Include="Classes\Foo.cs" />
     <Compile Include="Classes\DTClassNoParameterizedCtor.cs" />
@@ -71,6 +75,10 @@
     <ProjectReference Include="..\Faker\Faker.csproj">
       <Project>{3e0f2664-b27b-4059-b3ce-aff59c871005}</Project>
       <Name>Faker</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Faker\Generators\Generators.csproj">
+      <Project>{9019F101-76C4-4CF7-B168-F55C5C08D4CE}</Project>
+      <Name>Generators</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

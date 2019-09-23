@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using Faker;
+using Faker.Config;
+using Faker.Generators;
 
 namespace Faker.UseExample
 {
@@ -44,19 +48,42 @@ namespace Faker.UseExample
 
     }
 
+    public class Question
+    {
+        public int Answer { get; }
+
+        public Question(int answer)
+        {
+            Answer = answer;
+        }
+    }
+
+    public class Generator42 : IGenerator
+    {
+        public Random Random => Random;
+
+        public Type TypeOfGenerated => typeof(Int32);
+
+        public object Generate(Type type)
+        {
+            return (Int32)42;
+        }
+    }
+
     class UseExample
     {
-        struct MyStruct1
-        {
-
-        }
-
         static void Main(string[] args)
         {
             Faker _faker = new Faker();
             Bar bar = _faker.Create<Bar>();
             FooArray fooArray = _faker.Create<FooArray>();
             decimal[] decArr = _faker.Create<decimal[]> ();
+            FileStream fs = _faker.Create<FileStream>();
+
+            IConfig config = new FakerConfig();
+            config.Add<Question, int, Generator42>(Question => Question.Answer);
+            var faker = new Faker(config);
+            Question q = faker.Create<Question>();
             Console.ReadKey();
         }
     }

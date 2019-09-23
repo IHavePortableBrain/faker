@@ -59,6 +59,10 @@
       <Project>{3e0f2664-b27b-4059-b3ce-aff59c871005}</Project>
       <Name>Faker</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Faker\Generators\Generators.csproj">
+      <Project>{9019f101-76c4-4cf7-b168-f55c5c08d4ce}</Project>
+      <Name>Generators</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

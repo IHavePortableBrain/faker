@@ -42,7 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\Config.cs" />
     <Compile Include="Faker.cs" />
+    <Compile Include="Config\IConfig.cs" />
     <Compile Include="IFaker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

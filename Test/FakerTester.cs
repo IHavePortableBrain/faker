@@ -1,4 +1,5 @@
 ﻿using System;
+using Faker.Config;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Faker.Test
@@ -105,6 +106,36 @@ namespace Faker.Test
             Assert.IsNull(recc.Recurrent2.Recurrent2);
             Assert.IsNull(recc.Recurrent2.RecurrentProperty);
             Assert.AreNotEqual(default(int), recc.Recurrent2.Intt);
+        }
+
+        [TestMethod]
+        public void ConfigCreationWithCtorTest()
+        {
+            Faker _faker = new Faker();
+
+            IConfig config = new FakerConfig();
+            config.Add<QuestionWithCtor, int, Generator42>(Question => Question.Answer);
+            var faker = new Faker(config);
+            QuestionWithCtor q = faker.Create<QuestionWithCtor>();
+            Assert.AreEqual(42, q.Answer);
+            Assert.AreEqual(default(int), q.UnsettedAnswer);
+            Assert.AreEqual(default(int), q.AnswerField);
+        }
+
+        [TestMethod]
+        public void ConfigCreationWithNoCtorTest()
+        {
+            Faker _faker = new Faker();
+
+            IConfig config = new FakerConfig();
+            config.Add<QuestionWithNoCtor, int, Generator42>(Question => Question.Answer);
+            config.Add<QuestionWithNoCtor, string, GeneratorMambo>(Question => Question.Mambo);
+            var faker = new Faker(config);
+            QuestionWithNoCtor q = faker.Create<QuestionWithNoCtor>();
+            Assert.AreEqual(42, q.Answer);
+            Assert.AreEqual(default(int), q.UnsettedAnswer);
+            Assert.AreEqual("Mambo", q.Mambo);
+            Assert.AreNotEqual(42, q.NoAnswerField);
         }
 
     }

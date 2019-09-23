@@ -8,17 +8,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.IO;
+using Faker.Config;
+using System.Runtime.InteropServices;
 
 namespace Faker
 {
-    //Todo: rewrite to have unsetted by ctor properties setted. RewritePropertiesAndFieldsWithDefaultValues. 
+    //Todo: 1)rewrite to have unsetted by ctor properties setted. RewritePropertiesAndFieldsWithDefaultValues. 
     //after ctor method identical to create should be called but with comparison of left value of assignment operator(in wich method are called)and its default value
-    //many interface creation
-    //generators Random, Delegate parametrs should be in constructor
+    //2)many interface creation
+    //3)MSBuild, fix solution hierarchy/dll folder path
+    //4) rewrite config with MemberInfo?
     public class Faker : IFaker
     {
         protected Dictionary<Type, IGenerator> GeneratorByType;
         protected Dictionary<Type, IGenericGenerator> GenericGeneratorByType;
+        protected Dictionary<FieldInfo, IGenerator> CustomGeneratorByFieldInfo;
+        protected Dictionary<PropertyInfo, IGenerator> CustomGeneratorByPropInfo;
         protected readonly Random Random = new Random();
         protected Stack<Type> TypesNotCreatedYet = new Stack<Type>();
         private readonly string _pluginsPath = "Plugin\\netstandard2.0";
@@ -93,6 +98,61 @@ namespace Faker
             return created;
         }
 
+        protected bool TryCreateByCustomGenerator(FieldInfo fieldInfo, out object generated)
+        {
+            if (CustomGeneratorByFieldInfo.TryGetValue(fieldInfo, out IGenerator generator))
+            {
+                generated = generator.Generate(fieldInfo.FieldType);
+                return true;
+            }
+            else
+            {
+                generated = default(object);
+                return false;
+            }
+        }
+
+        protected bool TryCreateByCustomGenerator(PropertyInfo propertyInfo, out object generated)
+        {
+            if (CustomGeneratorByPropInfo.TryGetValue(propertyInfo, out IGenerator generator))
+            {
+                generated = generator.Generate(propertyInfo.PropertyType);
+                return true;
+            }
+            else
+            {
+                generated = default(object);
+                return false;
+            }
+        }
+
+        protected bool TryAssignByCustomGenerator(Type classToBeConstructed, ParameterInfo parameterToBeAssignedInfo, out object value)
+        {
+            value = null;
+            string paramNameToMemberName = Char.ToUpper(parameterToBeAssignedInfo.Name[0]) + parameterToBeAssignedInfo.Name.Substring(1);
+
+            PropertyInfo propInfo = classToBeConstructed.GetProperty(paramNameToMemberName);
+            FieldInfo fieldInfo = classToBeConstructed.GetField(paramNameToMemberName);
+            if (propInfo != null)
+            {
+                if (CustomGeneratorByPropInfo.TryGetValue(propInfo, out IGenerator generator))
+                {
+                    value = generator.Generate(propInfo.PropertyType);
+                    return true;
+                }
+            }
+            if (fieldInfo != null)
+            {
+                if (CustomGeneratorByFieldInfo.TryGetValue(fieldInfo, out IGenerator generator))
+                {
+                    value = generator.Generate(fieldInfo.FieldType);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private object CreateByConstructor(Type type, ConstructorInfo constructorInfo)
         {
             if (TypesNotCreatedYet.Contains(type))
@@ -106,7 +166,8 @@ namespace Faker
 
             foreach (ParameterInfo parameterInfo in constructorInfo.GetParameters())
             {
-                object value = Create(parameterInfo.ParameterType);
+                if (!TryAssignByCustomGenerator(type, parameterInfo, out object value))
+                    value = Create(parameterInfo.ParameterType);
                 parametersValues.Add(value);
             }
             try
@@ -137,7 +198,8 @@ namespace Faker
             {
                 foreach (FieldInfo fieldInfo in type.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance))
                 {
-                    value = Create(fieldInfo.FieldType);
+                    if (!TryCreateByCustomGenerator(fieldInfo, out value))
+                        value = Create(fieldInfo.FieldType);
                     fieldInfo.SetValue(created, value);
                 }
 
@@ -145,7 +207,8 @@ namespace Faker
                 {
                     if (propertyInfo.CanWrite)
                     {
-                        value = Create(propertyInfo.PropertyType);
+                        if (!TryCreateByCustomGenerator(propertyInfo, out value))
+                            value = Create(propertyInfo.PropertyType);
                         propertyInfo.SetValue(created, value);
                     }
                 }
@@ -184,14 +247,8 @@ namespace Faker
             }
         }
 
-        public Faker()
+        private void LoadPluginsAndAddGeneratorsFromThem()
         {
-            GeneratorByType = new Dictionary<Type, IGenerator>();
-            GenericGeneratorByType = new Dictionary<Type, IGenericGenerator>();
-
-            Assembly generatorsAssembly = Assembly.GetAssembly(typeof(IGenerator));//and IGenericGenerator
-            AddGenerators(generatorsAssembly);
-
             List<Assembly> assemblies = new List<Assembly>();
             try
             {
@@ -203,7 +260,7 @@ namespace Faker
                         assemblies.Add(pluginAssembly);
                         AddGenerators(pluginAssembly);
                     }
-                    catch (BadImageFormatException e )
+                    catch (BadImageFormatException e)
                     {
                         throw e;
                     }
@@ -213,6 +270,24 @@ namespace Faker
             {
                 throw e;
             }
+        }
+
+        public Faker(IConfig config = null)
+        {
+            GeneratorByType = new Dictionary<Type, IGenerator>();
+            GenericGeneratorByType = new Dictionary<Type, IGenericGenerator>();
+            CustomGeneratorByFieldInfo = new Dictionary<FieldInfo, IGenerator>();
+            CustomGeneratorByPropInfo = new Dictionary<PropertyInfo, IGenerator>();
+
+            Assembly generatorsAssembly = Assembly.GetAssembly(typeof(IGenerator));//and IGenericGenerator
+            AddGenerators(generatorsAssembly);
+            LoadPluginsAndAddGeneratorsFromThem();
+            if (config != null)
+            {
+                CustomGeneratorByFieldInfo = config.GeneratorByFieldInfo;
+                CustomGeneratorByPropInfo = config.GeneratorByPropInfo;
+            }
+
         }
     }
 }
